@@ -28,7 +28,7 @@ class LDA:
     def _load_data(self, n_mt=None, content_list=None, tokenid_list=None,
                    min_tf=None, min_df=None, max_dict_len=None, stem=True):
         """You can pass data by either doc-token count matrix n_mt or a
-        sequence of list consisting of words content_lis(preferred)."""
+        sequence of list consisting of words content_list(preferred)."""
         if self.dictionary is not None:
             pass
         elif self.dict_file is not None:
@@ -77,7 +77,7 @@ class LDA:
 
     def _initialize(self):
         """After data is loaded, we have to assign random topic token for each
-        word in the doc, and prepare some of the neccesary statistics"""
+        word in the doc. Then we prepare some of the neccesary statistics"""
 
         # the topic token of i-th word in m-th doc
         self.z_mi = [[] for m in range(self.M)]
@@ -137,7 +137,7 @@ class LDA:
         num_z_changes = [None, ] * iter_num
         tr = tqdm(range(iter_num), desc="Training model")
         for i in tr:
-            num_z_change = _sample._train(self.n_mk, self.n_kt,
+            num_z_change = _sample._lda_train(self.n_mk, self.n_kt,
                                           self.n_kt_sum, self.W, self.Z,
                                           self.N_m, self.I_m,
                                           self.alpha, self.beta)

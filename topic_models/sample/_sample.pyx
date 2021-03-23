@@ -8,7 +8,7 @@ from libc.stdlib cimport malloc, free, srand, rand, RAND_MAX
 import numpy as np
 cimport numpy as np
 
-cpdef _train(int[:,:] n_mk, int[:,:] n_kt, int [:] n_kt_sum,
+cpdef _lda_train(int[:,:] n_mk, int[:,:] n_kt, int [:] n_kt_sum,
             int[:] W, int[:] Z, int[:] N_m, int[:] I_m,
             double alpha, double beta):
     cdef:
@@ -22,7 +22,7 @@ cpdef _train(int[:,:] n_mk, int[:,:] n_kt, int [:] n_kt_sum,
 
     for m in range(M):
         for i in range(N_m[m]):
-            num_z_change += _sample_topic(n_mk, n_kt, n_kt_sum, W, Z, I_m, N_m, m, i, alpha, beta, theta_estimate, phi_t_estimate, pval)
+            num_z_change += _lda_sample_topic(n_mk, n_kt, n_kt_sum, W, Z, I_m, N_m, m, i, alpha, beta, theta_estimate, phi_t_estimate, pval)
 
     free(theta_estimate)
     free(phi_t_estimate)
@@ -30,7 +30,7 @@ cpdef _train(int[:,:] n_mk, int[:,:] n_kt, int [:] n_kt_sum,
     return num_z_change
 
 
-cdef _sample_topic(int[:,:] n_mk, int[:,:] n_kt, int[:] n_kt_sum,
+cdef _lda_sample_topic(int[:,:] n_mk, int[:,:] n_kt, int[:] n_kt_sum,
                    int[:] W, int[:] Z, int[:] I_m, int[:] N_m,
                    int m, int i,
                    double alpha, double beta,
@@ -83,7 +83,7 @@ cdef _sample_topic(int[:,:] n_mk, int[:,:] n_kt, int[:] n_kt_sum,
         return 0
 
 
-cdef _predict_word(double[:,:] phi, int[:] doc, int[:] n_z, int n, int N,
+cdef _lda_predict_word(double[:,:] phi, int[:] doc, int[:] n_z, int n, int N,
                    double alpha, double *theta_estimate, double *pval):
     cdef:
         int k, t, z
@@ -114,7 +114,7 @@ cdef _predict_word(double[:,:] phi, int[:] doc, int[:] n_z, int n, int N,
     return z
 
 
-cpdef _predict(double[:,:] phi, int[:] doc, int[:] z, int[:] n_z, double alpha):
+cpdef _lda_predict(double[:,:] phi, int[:] doc, int[:] z, int[:] n_z, double alpha):
     cdef:
         int n, z_i_old, z_i_new
         int N = len(doc)
@@ -125,7 +125,7 @@ cpdef _predict(double[:,:] phi, int[:] doc, int[:] z, int[:] n_z, double alpha):
     for n in range(N):
         z_i_old = z[n]
         dec(n_z[z_i_old])
-        z_i_new = _predict_word(phi, doc, n_z, n, N, alpha,
+        z_i_new = _lda_predict_word(phi, doc, n_z, n, N, alpha,
                                 theta_estimate, pval)
         inc(n_z[z_i_new])
         z[n] = z_i_new
