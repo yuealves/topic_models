@@ -73,7 +73,7 @@ class DMM:
         doc. Then we prepare some of the neccesary statistics"""
 
         # the topic token of the m-th doc
-        self.z_m = np.random.randint(self.K, size=self.M).astype=np.int32)
+        self.z_m = np.random.randint(self.K, size=self.M).astype(np.int32)
         # the count of word token t in k-th topic
         self.n_kt = np.zeros((self.K, self.T), dtype=np.int32)
         for m in tqdm(range(self.M), desc="Initializing model"):
