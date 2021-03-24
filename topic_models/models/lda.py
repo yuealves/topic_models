@@ -138,9 +138,9 @@ class LDA:
         tr = tqdm(range(iter_num), desc="Training model")
         for i in tr:
             num_z_change = _sample._lda_train(self.n_mk, self.n_kt,
-                                          self.n_kt_sum, self.W, self.Z,
-                                          self.N_m, self.I_m,
-                                          self.alpha, self.beta)
+                                              self.n_kt_sum, self.W, self.Z,
+                                              self.N_m, self.I_m,
+                                              self.alpha, self.beta)
             num_z_changes[i] = num_z_change
             tr.set_postfix({"num_z_change": num_z_change})
 
