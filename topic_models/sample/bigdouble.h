@@ -21,8 +21,13 @@ public:
   BigDouble operator*(BigDouble rhs) const;
   BigDouble operator/(BigDouble rhs) const;
   explicit operator double() const;
-  void print() const;
   std::string repr();
+
+  double get_val() const;
+  void set_val(double val);
+
+  int get_exp() const;
+  void set_exp(int exp);
 
 
 private:

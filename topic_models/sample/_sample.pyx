@@ -7,6 +7,7 @@ from cython.operator cimport preincrement as inc, predecrement as dec
 from libc.stdlib cimport malloc, free, srand, rand, RAND_MAX
 import numpy as np
 cimport numpy as np
+from bigdouble cimport BigDouble
 
 cpdef _lda_train(int[:,:] n_mk, int[:,:] n_kt, int [:] n_kt_sum,
             int[:] W, int[:] Z, int[:] N_m, int[:] I_m,
@@ -133,3 +134,7 @@ cpdef _lda_predict(double[:,:] phi, int[:] doc, int[:] z, int[:] n_z, double alp
     free(theta_estimate)
     free(pval)
     return z
+
+def demo():
+    cdef BigDouble *bd = new BigDouble(2, 3)
+    print(bd.repr().decode())

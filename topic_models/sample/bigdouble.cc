@@ -106,10 +106,6 @@ BigDouble::operator double() const {
     return result;
 }
 
-void BigDouble::print() const {
-    std::printf("(%f,%d)", val, exp);
-}
-
 std::string BigDouble::repr() {
     return "(" + std::to_string(val) +", " + std::to_string(exp) + ")";
 }
@@ -131,4 +127,20 @@ void BigDouble::rescale() {
         val *= LARGE_DOUBLE;
         exp--;
     }
+}
+
+double BigDouble::get_val() const {
+    return val;
+}
+
+int BigDouble::get_exp() const {
+    return exp;
+}
+
+void BigDouble::set_val(double val) {
+    this->val = val;
+}
+
+void BigDouble::set_exp(int exp) {
+    this->exp = exp;
 }

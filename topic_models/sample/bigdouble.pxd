@@ -1,6 +1,9 @@
-# cdef extern from "bigdouble.cc":
-#     pass
 from libcpp.string cimport string
+
+# Include bigdouble.cc file, details are described in
+# https://cython.readthedocs.io/en/latest/src/userguide/wrapping_CPlusPlus.html
+cdef extern from "bigdouble.cc":
+    pass
 
 cdef extern from "bigdouble.h":
     cdef cppclass BigDouble:
@@ -9,19 +12,13 @@ cdef extern from "bigdouble.h":
         BigDouble(double, int) except +
         void imul(BigDouble *)
         double val
+        double get_val()
         int exp
-        void printf()
+        int get_exp()
+        void set_val(double)
+        void set_exp(int)
         string repr()
 
 
 cdef class PyBigDouble:
     cdef BigDouble *thisptr    # hold a C++ instance which we're wrapping
-    def __cinit__(self, double val, int exp):
-        self.thisptr = new BigDouble(val, exp)
-    def __dealloc__(self):
-        del self.thisptr
-    def __imul__(self, PyBigDouble b):
-        self.thisptr.imul(b.thisptr)
-        return self
-    def __repr__(self):
-        return self.thisptr.repr().decode()
