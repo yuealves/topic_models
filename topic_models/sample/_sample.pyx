@@ -7,7 +7,8 @@ from cython.operator cimport preincrement as inc, predecrement as dec
 from libc.stdlib cimport malloc, free, srand, rand, RAND_MAX
 import numpy as np
 cimport numpy as np
-from bigdouble cimport BigDouble, normalize_probs
+
+from topic_models.utils.bigdouble cimport BigDouble, normalize_probs
 
 cpdef _lda_train(int[:,:] n_mk, int[:,:] n_kt, int [:] n_kt_sum,
                  int[:] W, int[:] Z, int[:] N_m, int[:] I_m,

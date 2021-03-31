@@ -1,1 +1,1 @@
-from topic_models.models import LDA
+from topic_models.models import LDA, DMM

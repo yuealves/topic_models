@@ -1,5 +1,5 @@
 from libcpp.string cimport string
-from bigdouble cimport BigDouble
+from topic_models.utils.bigdouble cimport BigDouble
 
 
 cdef class PyBigDouble:
