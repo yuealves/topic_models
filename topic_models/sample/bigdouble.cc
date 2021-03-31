@@ -62,8 +62,19 @@ void BigDouble::imul(BigDouble *rhs) {
     (*this) *= *rhs;
 }
 
+void BigDouble::imul(double val) {
+    this->val *= val;
+    if (this->val > LARGE_DOUBLE) {
+        this->val /= LARGE_DOUBLE;
+        exp++;
+    }
+    if (exp >= EXP_MAX) {
+      throw std::overflow_error("Value overflow:" + repr());
+    }
+}
+
 void BigDouble::idiv(BigDouble *rhs) {
-    (*this) *= *rhs;
+    (*this) /= *rhs;
 }
 
 BigDouble &BigDouble::operator/=(BigDouble rhs) {
@@ -118,6 +129,7 @@ void BigDouble::rescale() {
     }
     if (val == 0) {
         exp = 0;
+        return;
     }
     while (val >= LARGE_DOUBLE) {
         val /= LARGE_DOUBLE;
@@ -143,4 +155,15 @@ void BigDouble::set_val(double val) {
 
 void BigDouble::set_exp(int exp) {
     this->exp = exp;
+}
+
+void normalize_probs(BigDouble *probs, double *result, int K) {
+    BigDouble sum = 0;
+    for (int i = 0; i < K; i++) {
+        sum += probs[i];
+    }
+    for (int i = 0; i < K; i++) {
+        result[i] = (double) (probs[i] / sum);
+    }
+    return;
 }

@@ -16,6 +16,7 @@ public:
   BigDouble &operator*=(BigDouble rhs);
   BigDouble &operator/=(BigDouble rhs);
   void imul(BigDouble *rhs);
+  void imul(double val);
   void idiv(BigDouble *rhs);
   bool operator>(BigDouble rhs) const;
   BigDouble operator*(BigDouble rhs) const;
@@ -40,4 +41,6 @@ private:
 
   void rescale();
 };
+
+void normalize_probs(BigDouble *probs, double *result, int K);
 #endif // __BIGDOUBLE_H

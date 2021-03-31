@@ -11,6 +11,8 @@ cdef extern from "bigdouble.h":
         BigDouble(double) except +
         BigDouble(double, int) except +
         void imul(BigDouble *)
+        void imul(double)
+        void idiv(BigDouble *)
         double val
         double get_val()
         int exp
@@ -18,6 +20,7 @@ cdef extern from "bigdouble.h":
         void set_val(double)
         void set_exp(int)
         string repr()
+    cdef void normalize_probs(BigDouble *, double *, int)
 
 
 cdef class PyBigDouble:
