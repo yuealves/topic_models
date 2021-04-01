@@ -1,0 +1,5 @@
+numpy >= 1.19.2
+Cython >= 0.29.22
+nltk >= 3.5
+tqdm >= 4.59.0
+stop_words >= 2018.7.23
