@@ -1,4 +1,4 @@
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 from glob import glob
 from Cython.Build import cythonize
 import numpy as np
@@ -23,6 +23,7 @@ ext = [
 # include data files for building a wheel, https://stackoverflow.com/questions/24347450/how-do-you-add-additional-files-to-a-wheel
 # https://setuptools.readthedocs.io/en/latest/userguide/datafiles.html
 # https://github.com/pypa/sampleproject/blob/main/setup.py
+# Attention! Don't use distutils.core.setup, use setuptools.setup instead!
 setup(
     ext_modules=cythonize(ext),
     include_package_data=True,
