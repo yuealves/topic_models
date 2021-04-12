@@ -5,6 +5,7 @@ import numpy as np
 from tqdm import tqdm
 
 from topic_models.utils.dictionary import Dictionary
+from topic_models.utils.func import n2s
 from topic_models.utils.settings import (
     alpha, beta, K, demo_dataset_dir, iter_max, dict_file as default_dict)
 from topic_models.sample import _sample
@@ -71,6 +72,8 @@ class DMM:
 
         # the topic token of the m-th doc
         self.z_m = np.random.randint(self.K, size=self.M).astype(np.int32)
+        if self.fixed_labels is not None:
+            self.z_m[:self.n_fixed] = self.fixed_labels
         # the count of word token t in k-th topic
         self.n_kt = np.zeros((self.K, self.T), dtype=np.int32)
         self.M_k = np.random.randint(self.K, size=self.M).astype(np.int32)
@@ -103,7 +106,7 @@ class DMM:
         self.n_kt_sum = np.sum(self.n_kt, axis=1, dtype=np.int32)
 
     def fit(self, input_data, min_tf=10, min_df=None,
-            max_dict_len=None, stem=False):
+            max_dict_len=None, stem=False, semi_supervised_labels=None):
         if isinstance(input_data, np.ndarray) and len(input_data.shape) > 1:
             self._load_data(n_mt=input_data)
         elif isinstance(input_data[0][0], (int, np.integer)):
@@ -113,6 +116,9 @@ class DMM:
         else:
             raise Exception("Input type not supported!")
 
+        self.n_fixed = (0 if semi_supervised_labels is None
+                        else len(semi_supervised_labels))
+        self.fixed_labels = semi_supervised_labels
         self._initialize()
 
         iter_num = self.iter_max
@@ -124,7 +130,7 @@ class DMM:
             num_z_change = _sample._dmm_train(
                 self.n_kt, self.n_kt_sum, self.M_k, self.I_m, self.W,
                 self.W_freq, self.z_m, self.N_m, self.U_m, self.alpha,
-                self.beta
+                self.beta, self.n_fixed
             )
             num_z_changes[i] = num_z_change
             tr.set_postfix({"num_z_change": num_z_change})

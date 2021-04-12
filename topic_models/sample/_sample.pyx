@@ -12,7 +12,7 @@ from topic_models.utils.bigdouble cimport BigDouble, normalize_probs
 
 cpdef _lda_train(int[:,:] n_mk, int[:,:] n_kt, int [:] n_kt_sum,
                  int[:] W, int[:] Z, int[:] N_m, int[:] I_m,
-                 double alpha, double beta):
+                 double alpha, double beta, int n_fixed):
     cdef:
         int m, i, num_z_change = 0
         int M = n_mk.shape[0]
@@ -22,7 +22,7 @@ cpdef _lda_train(int[:,:] n_mk, int[:,:] n_kt, int [:] n_kt_sum,
         double *phi_t_estimate = <double *>malloc(K*sizeof(double))
         double *pval = <double *>malloc(K*sizeof(double))
 
-    for m in range(M):
+    for m in range(n_fixed, M):
         for i in range(N_m[m]):
             num_z_change += _lda_sample_word_topic(n_mk, n_kt, n_kt_sum, W, Z, I_m, N_m, m, i, alpha, beta, theta_estimate, phi_t_estimate, pval)
 
@@ -85,7 +85,8 @@ cdef _lda_sample_word_topic(int[:,:] n_mk, int[:,:] n_kt, int[:] n_kt_sum,
         return 0
 
 cpdef _dmm_train(int[:,:] n_kt, int[:] n_kt_sum, int[:] M_k, int[:] I_m, int[:] W_m,
-                 int[:] W_m_freq, int[:] Z, int[:] N_m, int[:] U_m, double alpha, double beta):
+                 int[:] W_m_freq, int[:] Z, int[:] N_m, int[:] U_m, double alpha,
+                 double beta, int n_fixed):
     cdef:
         int m, i1, i2, num_z_change = 0
         int M = N_m.shape[0]
@@ -94,7 +95,7 @@ cpdef _dmm_train(int[:,:] n_kt, int[:] n_kt_sum, int[:] M_k, int[:] I_m, int[:] 
         double *pval = <double *>malloc(K*sizeof(double))
         BigDouble *probs = <BigDouble *>malloc(K*sizeof(BigDouble))
 
-    for m in range(M):
+    for m in range(n_fixed, M):
         i1 = I_m[m]
         i2 = i1 + U_m[m]
         num_z_change += _dmm_sample_doc_topic(n_kt, n_kt_sum, M_k, W_m[i1:i2], W_m_freq[i1:i2],

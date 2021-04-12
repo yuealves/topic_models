@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 
 from topic_models.utils.dictionary import Dictionary
+from topic_models.utils.func import n2s
 from topic_models.utils.settings import (
     alpha, beta, K, demo_dataset_dir, iter_max, dict_file as default_dict)
 from topic_models.sample import _sample
@@ -87,7 +88,10 @@ class LDA:
         self.n_mk = np.zeros((self.M, self.K), dtype=np.int32)
         for m in tqdm(range(self.M), desc="Initializing model"):
             _ = len(self.w_mi[m])
-            self.z_mi[m] = np.random.randint(self.K, size=_).astype(np.int32)
+            if m < self.n_fixed:
+                self.z_mi[m] = np.ones(_).astype(np.int32) * self.fixed_labels[m]
+            else:
+                self.z_mi[m] = np.random.randint(self.K, size=_).astype(np.int32)
             for i, z in enumerate(self.z_mi[m]):
                 self.n_mk[m, z] += 1
                 self.n_kt[z, self.w_mi[m][i]] += 1
@@ -117,7 +121,7 @@ class LDA:
         return phi
 
     def fit(self, input_data, min_tf=10, min_df=None,
-            max_dict_len=None, stem=False):
+            max_dict_len=None, stem=False, semi_supervised_labels=None):
         if isinstance(input_data, np.ndarray) and len(input_data.shape) > 1:
             self._load_data(n_mt=input_data)
         elif isinstance(input_data[0][0], (int, np.integer)):
@@ -129,6 +133,9 @@ class LDA:
         else:
             raise Exception("Input type not supported!")
 
+        self.n_fixed = (0 if semi_supervised_labels is None
+                        else len(semi_supervised_labels))
+        self.fixed_labels = semi_supervised_labels
         self._initialize()
 
         iter_num = self.iter_max
@@ -140,7 +147,7 @@ class LDA:
             num_z_change = _sample._lda_train(self.n_mk, self.n_kt,
                                               self.n_kt_sum, self.W, self.Z,
                                               self.N_m, self.I_m,
-                                              self.alpha, self.beta)
+                                              self.alpha, self.beta, self.n_fixed)
             num_z_changes[i] = num_z_change
             tr.set_postfix({"num_z_change": num_z_change})
 
